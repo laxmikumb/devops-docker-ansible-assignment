@@ -1,0 +1,63 @@
+
+PLAY [webservers] **************************************************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [vm3]
+ok: [vm2]
+ok: [vm1]
+
+TASK [common : Create ansible_user] ********************************************
+ok: [vm2]
+ok: [vm3]
+ok: [vm1]
+
+TASK [common : Grant ansible_user passwordless sudo via dedicated sudoers file] ***
+ok: [vm3]
+ok: [vm1]
+ok: [vm2]
+
+TASK [common : Install base packages] ******************************************
+ok: [vm3]
+ok: [vm1]
+ok: [vm2]
+
+TASK [ssh : Confirm password auth stays disabled] ******************************
+ok: [vm1]
+ok: [vm3]
+ok: [vm2]
+
+TASK [ssh : Confirm root login stays disabled] *********************************
+ok: [vm2]
+ok: [vm1]
+ok: [vm3]
+
+TASK [nginx : Install nginx and openssl] ***************************************
+ok: [vm2]
+ok: [vm3]
+ok: [vm1]
+
+TASK [nginx : Create SSL directory] ********************************************
+ok: [vm1]
+ok: [vm2]
+ok: [vm3]
+
+TASK [nginx : Generate self-signed certificate] ********************************
+ok: [vm3]
+ok: [vm1]
+ok: [vm2]
+
+TASK [nginx : Deploy dynamic hostname/time page (SSI)] *************************
+ok: [vm1]
+ok: [vm2]
+ok: [vm3]
+
+TASK [nginx : Deploy base site config] *****************************************
+ok: [vm1]
+ok: [vm2]
+ok: [vm3]
+
+PLAY RECAP *********************************************************************
+vm1                        : ok=11   changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+vm2                        : ok=11   changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+vm3                        : ok=11   changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+

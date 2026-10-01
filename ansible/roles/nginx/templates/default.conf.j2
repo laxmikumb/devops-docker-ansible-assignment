@@ -1,0 +1,50 @@
+{% if inventory_hostname == 'vm1' %}
+upstream app_backend {
+    server vm2:80 max_fails=2 fail_timeout=5s;
+    server vm3:80 max_fails=2 fail_timeout=5s;
+}
+
+server {
+    listen 80;
+    server_name public.vm1.local;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    server_name public.vm1.local;
+
+    ssl_certificate     /etc/nginx/ssl/selfsigned.crt;
+    ssl_certificate_key /etc/nginx/ssl/selfsigned.key;
+
+    location / {
+        ssi on;
+        root /var/www/html;
+        index index.shtml;
+    }
+
+    location /vm2/ {
+        proxy_pass http://vm2/;
+        proxy_set_header Host $host;
+    }
+
+    location /vm3/ {
+        proxy_pass http://vm3/;
+        proxy_set_header Host $host;
+    }
+
+    location /app/ {
+        proxy_pass http://app_backend/;
+        proxy_next_upstream error timeout http_502 http_503 http_504;
+        proxy_connect_timeout 2s;
+    }
+}
+{% else %}
+server {
+    listen 80 default_server;
+    server_name _;
+    ssi on;
+    root /var/www/html;
+    index index.shtml;
+}
+{% endif %}

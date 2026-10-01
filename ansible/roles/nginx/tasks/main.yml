@@ -1,0 +1,36 @@
+---
+- name: Install nginx and openssl
+  ansible.builtin.apt:
+    name:
+      - nginx
+      - openssl
+    state: present
+    update_cache: true
+
+- name: Create SSL directory
+  ansible.builtin.file:
+    path: /etc/nginx/ssl
+    state: directory
+    mode: "0755"
+
+- name: Generate self-signed certificate
+  ansible.builtin.command: >
+    openssl req -x509 -nodes -days 365 -newkey rsa:2048
+    -keyout /etc/nginx/ssl/selfsigned.key
+    -out /etc/nginx/ssl/selfsigned.crt
+    -subj "/CN=public.vm1.local"
+  args:
+    creates: /etc/nginx/ssl/selfsigned.crt
+
+- name: Deploy dynamic hostname/time page (SSI)
+  ansible.builtin.template:
+    src: index.shtml.j2
+    dest: /var/www/html/index.shtml
+    mode: "0644"
+
+- name: Deploy base site config
+  ansible.builtin.template:
+    src: default.conf.j2
+    dest: /etc/nginx/sites-available/default
+    mode: "0644"
+  notify: reload nginx

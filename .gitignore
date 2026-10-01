@@ -1,0 +1,5 @@
+.vault_pass.txt
+docker/vm_key
+nginx/certs/vm1.key
+privkey.pem
+*.pem

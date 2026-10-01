@@ -1,0 +1,20 @@
+---
+- name: Create ansible_user
+  ansible.builtin.user:
+    name: ansible_user
+    password: "{{ vault_ansible_user_password | string | password_hash('sha512', 'fixedsalt123') }}"
+    shell: /bin/bash
+    state: present
+
+- name: Grant ansible_user passwordless sudo via dedicated sudoers file
+  ansible.builtin.copy:
+    dest: /etc/sudoers.d/ansible_user
+    content: "ansible_user ALL=(ALL) NOPASSWD:ALL\n"
+    mode: "0440"
+    validate: "visudo -cf %s"
+
+- name: Install base packages
+  ansible.builtin.apt:
+    name: [curl, git, docker.io]
+    state: present
+    update_cache: true
