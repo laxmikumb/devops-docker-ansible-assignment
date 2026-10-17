@@ -1,11 +1,8 @@
 FROM ubuntu:22.04
 
-RUN apt-get update \
-    -o Acquire::Retries=5 \
-    -o Acquire::http::No-Cache=true \
-    -o Acquire::BrokenProxy=true \
-    && apt-get install -y --fix-missing \
-    -o Acquire::http::No-Cache=true \
+RUN sed -i 's|http://archive.ubuntu.com|http://azure.archive.ubuntu.com|g' /etc/apt/sources.list
+
+RUN apt-get update && apt-get install -y \
     openssh-server sudo ufw iproute2 iputils-ping \
     python3 curl git nginx openssl vim net-tools \
     && mkdir -p /var/run/sshd
